@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Экзамены</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            color: #003399;
+            text-align: center;
+            padding: 20px;
+            background-image: url('https://2.downloader.disk.yandex.ru/preview/fc825002a6149848e20d7627455504a26c60bea4d8589cb3bede911c5c9aff77/inf/63Ujoje1S90U9NbZXuf1gbVCUGHTDZHN9mU_wJh2KWitd-LqJLlHR32cUKbl_taoQrIxQQPwtc4scpFg_g9uEg%3D%3D?uid=1130000061490332&filename=Group%20556.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=1130000061490332&tknv=v2&size=3024x1764'); /* Путь к вашей фоновой картинке */
+            background-size: cover;
+   	    background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3 {
+            color: #003399;
+	    font-size: 1.5em;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 15px;
+            text-align: center;
+	    font-size: 1.5em;
+        }
+
+        th {
+            background-color: #003399;
+            color: white;
+        }
+
+        .finished {
+            background-color: red;
+            color: white;
+        }
+
+        .warning {
+            background-color: #ffcccc;
+            color: #cc0000;
+            font-size: 1.2em;
+        }
+
+        #currentTime {
+            font-size: 4em; /* Сделать текущее время ещё крупнее */
+            margin-bottom: 20px;
+        }
+
+        /* Дополнительные стили для улучшения внешнего вида */
+        .end-time {
+            transition: background-color 0.5s, color 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <h1>Пробные экзамены в ИТМО</h1>
+    <p id="currentTime"></p>
+    <table id="examTable">
+        <thead>
+            <tr>
+                <th>Тип экзамена</th>
+                <th>Предмет</th>
+                <th>Продолжительность</th>
+                <th>Время окончания</th>
+            </tr>
+        </thead>
+        <tbody id="examBody"></tbody>
+    </table>
+
+    <script>
+        const examData = {
+            exam1: { type: 'ЕГЭ', subject: 'Химия', duration: '3 часа 30 минут', time: '3 30' },
+            exam2: { type: 'ЕГЭ', subject: 'Математика', duration: '3 часа 55 минут', time: '3 55' },
+            exam3: { type: 'ОГЭ', subject: 'Русский язык', duration: '3 часа', time: '3 0' },
+            exam4: { type: 'ЕГЭ', subject: 'Физика', duration: '4 часа', time: '4 0' },
+            exam5: { type: 'ОГЭ', subject: 'Английский язык', duration: '3 часа 15 минут', time: '3 15' },
+            // Добавьте больше экзаменов здесь, если необходимо
+        };
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').innerText = 'Текущее время: ' + now.toLocaleTimeString('ru-RU', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Europe/Moscow'
+            });
+            checkWarnings(now);
+        }
+
+        function calculateEndTime(startTime, duration) {
+            const [hours, minutes] = startTime.split(':').map(Number);
+            const startDateTime = new Date();
+            startDateTime.setHours(hours);
+            startDateTime.setMinutes(minutes);
+            startDateTime.setSeconds(0);
+            startDateTime.setMilliseconds(0);
+
+            const [durationHours, durationMinutes] = duration.split(' ').filter(item => !isNaN(item)).map(Number);
+            const endDateTime = new Date(startDateTime.getTime());
+            endDateTime.setHours(endDateTime.getHours() + durationHours);
+            endDateTime.setMinutes(endDateTime.getMinutes() + (durationMinutes || 0));
+
+            return endDateTime;
+        }
+
+        function checkWarnings(now) {
+            const examRows = document.querySelectorAll('#examTable tbody tr');
+            examRows.forEach(row => {
+                const endTimeAttr = row.getAttribute('data-end-time');
+                if (!endTimeAttr) return;
+
+                const endTime = new Date(endTimeAttr);
+                const timeDifference = (endTime - now) / 1000 / 60; // Разница в минутах
+
+                const endTimeCell = row.querySelector('.end-time');
+
+                if (timeDifference <= 0) {
+                    row.classList.add('finished');
+                    endTimeCell.innerText = 'Экзамен окончен';
+                } else if (timeDifference <= 30) {
+                    row.classList.add('warning');
+                } else {
+                    row.classList.remove('warning', 'finished');
+                }
+            });
+        }
+
+        function displayExams() {
+            const storedData = JSON.parse(localStorage.getItem('examData'));
+            if (!storedData) {
+                alert('Нет данных экзаменов. Пожалуйста, выберите экзамены на первой странице.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const startTime = storedData.startTime;
+            const selectedExams = storedData.selectedExams;
+            const examBody = document.getElementById('examBody');
+
+            selectedExams.forEach((examKey) => {
+                const exam = examData[examKey];
+                const endTime = calculateEndTime(startTime, exam.time);
+                const endTimeString = endTime.toLocaleTimeString('ru-RU', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'Europe/Moscow'
+                });
+
+                const row = `<tr data-end-time="${endTime.toISOString()}">
+                                <td>${exam.type}</td>
+                                <td>${exam.subject}</td>
+                                <td>${exam.duration}</td>
+                                <td class="end-time">${endTimeString}</td>
+                             </tr>`;
+                examBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        setInterval(updateTime, 1000); // Обновляем текущее время каждую секунду
+        window.onload = function() {
+            displayExams();
+            updateTime();
+        };
+    </script>
+</body>
+</html>
