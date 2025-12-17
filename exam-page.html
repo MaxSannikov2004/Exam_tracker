@@ -309,11 +309,27 @@ html[data-theme="dark"] .card.timer tbody tr:nth-child(even) td{
   color: var(--timerMuted);
 }
 
-/* Чтобы подсветка всегда побеждала "зебру" */
-.card.timer tbody tr.warn:nth-child(even) td,
-.card.timer tbody tr.danger:nth-child(even) td,
-.card.timer tbody tr.done:nth-child(even) td{
-  background: inherit;
+/* Зебра — на TR, чтобы не мешала подсветке */
+.card.timer tbody tr:nth-child(even){
+  background: rgba(127,127,127,.06);
+}
+html[data-theme="dark"] .card.timer tbody tr:nth-child(even){
+  background: rgba(255,255,255,.04);
+}
+
+/* Чтобы фон TR был виден (ячейки прозрачные) */
+.card.timer tbody td{
+  background: transparent;
+}
+
+/* Подсветка по классам от JS */
+.card.timer tbody tr.warn{ background: var(--rowWarn); }
+.card.timer tbody tr.danger{ background: var(--rowDanger); }
+.card.timer tbody tr.done{ background: var(--rowDone); }
+
+/* Чуть мягче выглядит при смене состояния */
+.card.timer tbody tr{
+  transition: background .2s ease;
 }
 
   </style>
@@ -556,6 +572,7 @@ updateThemeBtn();
 </script>
 </body>
 </html>
+
 
 
 
