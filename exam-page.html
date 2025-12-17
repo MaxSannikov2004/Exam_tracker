@@ -295,6 +295,27 @@ html[data-theme="dark"] .card.timer tbody tr:nth-child(even) td{
 .card.timer th:nth-child(3){ width: 19%; }
 .card.timer th:nth-child(4){ width: 19%; }
 
+
+  /* ===== Подсветка строк (30/5 минут и "Окончен") ===== */
+/* Если JS вешает классы warn/danger/done на <tr> */
+.card.timer tbody tr.warn td{
+  background: var(--rowWarn);
+}
+.card.timer tbody tr.danger td{
+  background: var(--rowDanger);
+}
+.card.timer tbody tr.done td{
+  background: var(--rowDone);
+  color: var(--timerMuted);
+}
+
+/* Чтобы подсветка всегда побеждала "зебру" */
+.card.timer tbody tr.warn:nth-child(even) td,
+.card.timer tbody tr.danger:nth-child(even) td,
+.card.timer tbody tr.done:nth-child(even) td{
+  background: inherit;
+}
+
   </style>
 </head>
 
@@ -535,5 +556,6 @@ updateThemeBtn();
 </script>
 </body>
 </html>
+
 
 
