@@ -10,19 +10,60 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <style>
+  
+<script>
+  (function(){
+    const t = localStorage.getItem("examTracker.theme") || "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
     :root{
-      --bg: #0b1020;
-      --card: rgba(255,255,255,.10);
-      --card2: rgba(255,255,255,.14);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --line: rgba(255,255,255,.18);
-      --accent: #7aa2ff;
-      --accent2:#ff8a3d;
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --r: 18px;
-    }
+  --bg: #0b1020;
+  --overlay: rgba(11,16,32,.78);
+
+  --card: rgba(255,255,255,.10);
+  --card2: rgba(255,255,255,.14);
+  --text: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.70);
+  --line: rgba(255,255,255,.18);
+
+  --inputBg: rgba(0,0,0,.25);
+  --placeholder: rgba(255,255,255,.55);
+  --pillBg: rgba(0,0,0,.18);
+  --examBg: rgba(0,0,0,.22);
+  --examHoverBg: rgba(0,0,0,.26);
+
+  --chipBg: rgba(255,255,255,.08);
+  --chipText: rgba(255,255,255,.78);
+
+  --accent: #7aa2ff;
+  --accent2:#ff8a3d;
+  --shadow: 0 12px 30px rgba(0,0,0,.35);
+  --r: 18px;
+}
+
+html[data-theme="light"]{
+  --bg: #f5f7ff;
+  --overlay: rgba(245,247,255,.86);
+
+  --card: rgba(255,255,255,.92);
+  --card2: rgba(255,255,255,.96);
+  --text: rgba(17,24,39,.92);
+  --muted: rgba(17,24,39,.62);
+  --line: rgba(17,24,39,.14);
+
+  --inputBg: rgba(255,255,255,.92);
+  --placeholder: rgba(17,24,39,.45);
+  --pillBg: rgba(255,255,255,.86);
+  --examBg: rgba(255,255,255,.80);
+  --examHoverBg: rgba(255,255,255,.92);
+
+  --chipBg: rgba(17,24,39,.06);
+  --chipText: rgba(17,24,39,.70);
+
+  --shadow: 0 10px 24px rgba(0,0,0,.12);
+}
 
     *{ box-sizing:border-box; }
     body{
@@ -32,7 +73,7 @@
       min-height:100vh;
       background-color: var(--bg);
       background-image:
-        linear-gradient(180deg, rgba(11,16,32,.78), rgba(11,16,32,.78)),
+        linear-gradient(180deg, var(--overlay), var(--overlay)),
         url("image/image.png");
       background-size: cover;
       background-position: center;
@@ -102,11 +143,11 @@
       padding: 12px 12px;
       border-radius: 12px;
       border: 1px solid var(--line);
-      background: rgba(0,0,0,.25);
+      background: var(--inputBg);
       color: var(--text);
       outline: none;
     }
-    input::placeholder{ color: rgba(255,255,255,.55); }
+    input::placeholder{ color: var(--placeholder); }
 
     .row{ margin-bottom: 12px; }
 
@@ -147,8 +188,32 @@
       border: 1px solid var(--line);
       padding: 8px 10px;
       border-radius: 999px;
-      background: rgba(0,0,0,.18);
+      background: var(--pillBg);
     }
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.themeBtn{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: var(--pillBg);
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+}
+.themeBtn b{ color: var(--text); font-weight: 800; }
+
 
     .examPane{
       border-top: 1px solid var(--line);
@@ -170,7 +235,8 @@
       margin: 0 0 10px;
       font-size: 14px;
       letter-spacing:.25px;
-      color: rgba(255,255,255,.85);
+      color: var(--text);
+      opacity: .85;
       text-transform: uppercase;
     }
 
@@ -191,27 +257,27 @@
       padding: 12px;
       border-radius: 14px;
       border: 1px solid var(--line);
-      background: rgba(0,0,0,.22);
+      background: var(--examBg);
       transition: transform .08s ease, background-color .15s ease;
     }
     .examItem:hover{
       transform: translateY(-1px);
-      background: rgba(0,0,0,.26);
+      background: var(--examHoverBg);
     }
     .examItem input{ margin-top: 3px; transform: scale(1.15); }
     .examMeta{ display:flex; flex-direction:column; gap:4px; }
     .examName{ font-weight:700; }
     .examSub{ color: var(--muted); font-size: 13px; line-height: 1.25; }
     .k{
-      display:inline-block;
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      color: rgba(255,255,255,.78);
-      background: rgba(255,255,255,.08);
-      margin-left: 8px;
-    }
+  display:inline-block;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--chipText);
+  background: var(--chipBg);
+  margin-left: 8px;
+}
 
     .footerActions{
       margin-top: 14px;
@@ -228,7 +294,7 @@
       line-height: 1.35;
     }
 
-    a{ color: #cfe0ff; }
+    a{ color: var(--accent); }
   </style>
 </head>
 
@@ -239,26 +305,20 @@
         <h1>Exam Tracker</h1>
         <p>Выбери экзамены и задай время начала — на следующем экране будет <b>время окончания</b>, <b>таймер “осталось”</b> и подсветка за 30/5 минут до конца.</p>
       </div>
-      <div class="pill" id="selectedPill">Выбрано: 0</div>
+      <div class="headerRight">
+        <button class="themeBtn" id="themeBtn" type="button" aria-label="Переключить тему">—</button>
+        <div class="pill" id="selectedPill">Выбрано: 0</div>
+      </div>
     </header>
 
     <div class="grid">
       <section class="card">
         <div class="inner">
           <div class="row">
-            <label for="startTimeInput">Время начала экзамена</label>
+            <label for="startTimeInput">Время начала экзамена (МСК / Санкт‑Петербург)</label>
             <input type="time" id="startTimeInput" value="10:00" />
           </div>
-
-          <div class="row">
-            <label for="timeZoneSelect">Часовой пояс</label>
-            <select id="timeZoneSelect">
-              <option value="Europe/Moscow">Europe/Moscow (МСК)</option>
-              <option value="local">Мой (локальный)</option>
-            </select>
-          </div>
-
-          <div class="row">
+<div class="row">
             <label for="examSearch">Поиск</label>
             <input type="search" id="examSearch" placeholder="Напр.: математика, англ, инфо…" />
           </div>
@@ -331,6 +391,32 @@
   const pill = document.getElementById("selectedPill");
   const warnText = document.getElementById("warnText");
   const continueBtn = document.getElementById("continueBtn");
+
+const FIXED_TZ = "Europe/Moscow";
+
+// Тема (общая для всех страниц)
+const THEME_KEY = "examTracker.theme";
+const themeBtn = document.getElementById("themeBtn");
+
+function getTheme(){
+  return localStorage.getItem(THEME_KEY) || "light";
+}
+function setTheme(t){
+  document.documentElement.dataset.theme = t;
+  localStorage.setItem(THEME_KEY, t);
+  updateThemeBtn();
+}
+function updateThemeBtn(){
+  const t = getTheme();
+  themeBtn.innerHTML = (t === "dark")
+    ? '🌙 <b>Тёмная</b>'
+    : '☀ <b>Светлая</b>';
+}
+themeBtn.addEventListener("click", () => {
+  setTheme(getTheme() === "dark" ? "light" : "dark");
+});
+updateThemeBtn();
+
 
   function formatDuration(min){
     const h = Math.floor(min / 60);
@@ -412,7 +498,7 @@
         const state = loadState() || {};
         state.selectedExamIds = getSelectedIds();
         state.startTime = document.getElementById("startTimeInput").value;
-        state.timeZone = document.getElementById("timeZoneSelect").value;
+        state.timeZone = FIXED_TZ;
         saveState(state);
         updatePill();
       });
@@ -424,31 +510,18 @@
   // Инициализация
   (function init(){
     const state = loadState();
-    if (state?.startTime) document.getElementById("startTimeInput").value = state.startTime;
-    if (state?.timeZone) document.getElementById("timeZoneSelect").value = state.timeZone;
-
-    document.getElementById("startTimeInput").addEventListener("change", () => {
+    if (state?.startTime) document.getElementById("startTimeInput").value = state.startTime;    document.getElementById("startTimeInput").addEventListener("change", () => {
       const state = loadState() || {};
       state.startTime = document.getElementById("startTimeInput").value;
-      state.timeZone = document.getElementById("timeZoneSelect").value;
+      state.timeZone = FIXED_TZ;
       state.selectedExamIds = getSelectedIds();
       saveState(state);
-    });
-
-    document.getElementById("timeZoneSelect").addEventListener("change", () => {
-      const state = loadState() || {};
-      state.startTime = document.getElementById("startTimeInput").value;
-      state.timeZone = document.getElementById("timeZoneSelect").value;
-      state.selectedExamIds = getSelectedIds();
-      saveState(state);
-    });
-
-    document.getElementById("selectAllBtn").addEventListener("click", () => {
+    });    document.getElementById("selectAllBtn").addEventListener("click", () => {
       for (const el of document.querySelectorAll('input[name="exam"]')) el.checked = true;
       const state = loadState() || {};
       state.selectedExamIds = getSelectedIds();
       state.startTime = document.getElementById("startTimeInput").value;
-      state.timeZone = document.getElementById("timeZoneSelect").value;
+      state.timeZone = FIXED_TZ;
       saveState(state);
       updatePill();
     });
@@ -458,7 +531,7 @@
       const state = loadState() || {};
       state.selectedExamIds = [];
       state.startTime = document.getElementById("startTimeInput").value;
-      state.timeZone = document.getElementById("timeZoneSelect").value;
+      state.timeZone = FIXED_TZ;
       saveState(state);
       updatePill();
     });
@@ -468,7 +541,7 @@
     document.getElementById("continueBtn").addEventListener("click", () => {
       const state = loadState() || {};
       state.startTime = document.getElementById("startTimeInput").value;
-      state.timeZone = document.getElementById("timeZoneSelect").value;
+      state.timeZone = FIXED_TZ;
       state.selectedExamIds = getSelectedIds();
       if (!state.selectedExamIds.length){
         updatePill();
