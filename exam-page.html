@@ -302,33 +302,16 @@ updateThemeBtn();
   // Та же таблица экзаменов, что и на первой странице.
   const EXAMS = [
     { id: "ege_russian", type: "ЕГЭ", subject: "Русский язык", durationMin: 210 },
-    { id: "ege_math_base", type: "ЕГЭ", subject: "Математика (базовый уровень)", durationMin: 180 },
-    { id: "ege_math_profile", type: "ЕГЭ", subject: "Математика (профильный уровень)", durationMin: 235 },
+    { id: "oge_russian", type: "ОГЭ", subject: "Русский язык", durationMin: 235 },
+    { id: "ege_math_profile", type: "ЕГЭ", subject: "Математика", durationMin: 235 },
+    { id: "oge_math", type: "ОГЭ", subject: "Математика", durationMin: 235 },
 
     { id: "ege_physics", type: "ЕГЭ", subject: "Физика", durationMin: 235 },
+    { id: "oge_physics", type: "ОГЭ", subject: "Физика", durationMin: 180 },
     { id: "ege_chemistry", type: "ЕГЭ", subject: "Химия", durationMin: 210 },
     { id: "ege_biology", type: "ЕГЭ", subject: "Биология", durationMin: 235 },
-    { id: "ege_informatics", type: "ЕГЭ", subject: "Информатика (КЕГЭ)", durationMin: 235 },
-    { id: "ege_geography", type: "ЕГЭ", subject: "География", durationMin: 180 },
+    { id: "ege_informatics", type: "ЕГЭ", subject: "Информатика", durationMin: 235 },
 
-    { id: "ege_social", type: "ЕГЭ", subject: "Обществознание", durationMin: 210 },
-    { id: "ege_history", type: "ЕГЭ", subject: "История", durationMin: 210 },
-    { id: "ege_literature", type: "ЕГЭ", subject: "Литература", durationMin: 235 },
-
-    { id: "ege_en_written", type: "ЕГЭ", subject: "Английский — письменная часть", durationMin: 190 },
-    { id: "ege_en_oral", type: "ЕГЭ", subject: "Английский — устная часть", durationMin: 17 },
-
-    { id: "ege_de_written", type: "ЕГЭ", subject: "Немецкий — письменная часть", durationMin: 190 },
-    { id: "ege_de_oral", type: "ЕГЭ", subject: "Немецкий — устная часть", durationMin: 17 },
-
-    { id: "ege_fr_written", type: "ЕГЭ", subject: "Французский — письменная часть", durationMin: 190 },
-    { id: "ege_fr_oral", type: "ЕГЭ", subject: "Французский — устная часть", durationMin: 17 },
-
-    { id: "ege_es_written", type: "ЕГЭ", subject: "Испанский — письменная часть", durationMin: 190 },
-    { id: "ege_es_oral", type: "ЕГЭ", subject: "Испанский — устная часть", durationMin: 17 },
-
-    { id: "ege_zh_written", type: "ЕГЭ", subject: "Китайский — письменная часть", durationMin: 180 },
-    { id: "ege_zh_oral", type: "ЕГЭ", subject: "Китайский — устная часть", durationMin: 14 },
   ];
 
   const examById = new Map(EXAMS.map(e => [e.id, e]));
@@ -488,3 +471,4 @@ updateThemeBtn();
 </script>
 </body>
 </html>
+
