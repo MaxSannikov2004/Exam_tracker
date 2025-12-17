@@ -9,21 +9,88 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <style>
+  
+<script>
+  (function(){
+    const t = localStorage.getItem("examTracker.theme") || "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
     :root{
-      --bg: #0b1020;
-      --card: rgba(255,255,255,.10);
-      --line: rgba(255,255,255,.18);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --ok: rgba(122,162,255,.20);
-      --warn: rgba(255,138,61,.20);
-      --danger: rgba(255,84,84,.22);
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --r: 18px;
-      --accent: #7aa2ff;
-      --accent2:#ff8a3d;
-    }
+  --bg: #0b1020;
+  --overlay: rgba(11,16,32,.78);
+
+  --card: rgba(255,255,255,.10);
+  --line: rgba(255,255,255,.18);
+  --text: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.70);
+
+  --shadow: 0 12px 30px rgba(0,0,0,.35);
+  --r: 18px;
+  --accent: #7aa2ff;
+  --accent2:#ff8a3d;
+
+  /* Плашка "текущее время" */
+  --nowBg: rgba(255,255,255,.92);
+  --nowBorder: rgba(17,24,39,.18);
+  --nowText: #0b1020;
+  --nowLabel: rgba(17,24,39,.65);
+
+  /* Карточка-таймер (таблица) */
+  --timerBg: rgba(17,24,39,.60);
+  --timerBorder: rgba(255,255,255,.18);
+  --timerBorder2: rgba(255,255,255,.12);
+  --timerText: rgba(255,255,255,.92);
+  --timerMuted: rgba(255,255,255,.70);
+  --timerThBg: rgba(255,255,255,.06);
+  --timerThText: rgba(255,255,255,.86);
+  --timerBarBg: rgba(255,255,255,.10);
+  --timerBarBorder: rgba(255,255,255,.16);
+
+  --rowOk: rgba(122,162,255,.07);
+  --rowWarn: rgba(255,138,61,.20);
+  --rowDanger: rgba(255,84,84,.22);
+  --rowDone: rgba(255,255,255,.06);
+
+  /* Кнопки "ghost" */
+  --ghostBg: rgba(255,255,255,.10);
+  --ghostBorder: rgba(255,255,255,.18);
+}
+
+html[data-theme="light"]{
+  --bg: #f5f7ff;
+  --overlay: rgba(245,247,255,.86);
+
+  --card: rgba(255,255,255,.92);
+  --line: rgba(17,24,39,.14);
+  --text: rgba(17,24,39,.92);
+  --muted: rgba(17,24,39,.62);
+  --shadow: 0 10px 24px rgba(0,0,0,.12);
+
+  --nowBg: rgba(255,255,255,.92);
+  --nowBorder: rgba(17,24,39,.14);
+  --nowText: rgba(17,24,39,.92);
+  --nowLabel: rgba(17,24,39,.60);
+
+  --timerBg: rgba(255,255,255,.92);
+  --timerBorder: rgba(17,24,39,.14);
+  --timerBorder2: rgba(17,24,39,.10);
+  --timerText: rgba(17,24,39,.92);
+  --timerMuted: rgba(17,24,39,.62);
+  --timerThBg: rgba(17,24,39,.04);
+  --timerThText: rgba(17,24,39,.86);
+  --timerBarBg: rgba(17,24,39,.06);
+  --timerBarBorder: rgba(17,24,39,.12);
+
+  --rowOk: rgba(255,255,255,1);
+  --rowWarn: rgba(255,247,237,1);
+  --rowDanger: rgba(254,226,226,1);
+  --rowDone: rgba(243,244,246,1);
+
+  --ghostBg: rgba(255,255,255,.82);
+  --ghostBorder: rgba(17,24,39,.14);
+}
 
     *{ box-sizing:border-box; }
     body{
@@ -33,7 +100,7 @@
       min-height:100vh;
       background-color: var(--bg);
       background-image:
-        linear-gradient(180deg, rgba(11,16,32,.78), rgba(11,16,32,.78)),
+        linear-gradient(180deg, var(--overlay), var(--overlay)),
         url("image/image.png");
       background-size: cover;
       background-position: top center;
@@ -74,26 +141,55 @@
     }
 
     .now{
-      display:flex;
-      align-items:baseline;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.22);
-      box-shadow: var(--shadow);
-    }
-    .now .label{ color: var(--muted); font-size: 12px; }
-    .now .time{ font-size: 32px; font-weight: 900; letter-spacing: .5px; }
+  display:flex;
+  align-items:baseline;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--nowBorder);
+  background: var(--nowBg);
+  box-shadow: var(--shadow);
+  color: var(--nowText);
+}
+.now .label{ color: var(--nowLabel); font-size: 12px; }
+.now .time{ font-size: clamp(40px, 6vw, 64px); font-weight: 900; letter-spacing: .5px; line-height: 1; }
+
 
     .card{
       background: var(--card);
-      border: 1px solid var(--line);
+      border: 1px solid var(--ghostBorder);
       border-radius: var(--r);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       overflow:hidden;
+    }
+
+    .card.timer{
+  background: var(--timerBg);
+  border: 1px solid var(--timerBorder);
+  color: var(--timerText);
+}
+.card.timer th{
+  background: var(--timerThBg);
+  color: var(--timerThText);
+  border-bottom: 1px solid var(--timerBorder2);
+}
+.card.timer td{
+  border-bottom: 1px solid var(--timerBorder2);
+  color: var(--timerText);
+}
+.card.timer .sub{ color: var(--timerMuted); }
+.card.timer .bar{
+  background: var(--timerBarBg);
+  border: 1px solid var(--timerBarBorder);
+}
+
+
+    .sub{
+      font-size: 12px;
+      margin-top: 4px;
+      opacity: .72;
     }
 
     .tableWrap{
@@ -108,7 +204,7 @@
 
     th, td{
       padding: 12px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.12);
+      border-bottom: 1px solid var(--timerBorder2);
       text-align: left;
       vertical-align: middle;
       white-space: nowrap;
@@ -118,21 +214,21 @@
       font-size: 12px;
       letter-spacing: .25px;
       text-transform: uppercase;
-      color: rgba(255,255,255,.80);
-      background: rgba(0,0,0,.20);
+      color: var(--timerThText);
+      background: var(--timerThBg);
     }
 
-    tr.ok{ background: rgba(122,162,255,.07); }
-    tr.warn{ background: var(--warn); }
-    tr.danger{ background: var(--danger); }
-    tr.done{ background: rgba(255,84,84,.28); }
+    tr.ok{ background: var(--rowOk); }
+    tr.warn{ background: var(--rowWarn); }
+    tr.danger{ background: var(--rowDanger); }
+    tr.done{ background: var(--rowDone); }
 
     .bar{
       width: 100%;
       height: 10px;
       border-radius: 999px;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.16);
+      background: var(--timerBarBg);
+      border: 1px solid var(--timerBarBorder);
       overflow:hidden;
     }
     .fill{
@@ -161,8 +257,8 @@
     }
     .ghost{
       color: var(--text);
-      background: rgba(255,255,255,.10);
-      border: 1px solid var(--line);
+      background: var(--ghostBg);
+      border: 1px solid var(--ghostBorder);
     }
 
     .small{
@@ -171,6 +267,29 @@
       margin-top: 8px;
       line-height: 1.35;
     }
+  
+.right{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.themeBtn{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 10px 12px;
+  border: 1px solid var(--ghostBorder);
+  background: var(--ghostBg);
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+}
+
   </style>
 </head>
 
@@ -182,13 +301,16 @@
         <div class="meta" id="metaLine">—</div>
       </div>
 
-      <div class="now">
-        <div class="label">Текущее время</div>
-        <div class="time" id="currentTime">--:--</div>
+      <div class="right">
+        <button class="themeBtn" id="themeBtn" type="button" aria-label="Переключить тему">—</button>
+        <div class="now">
+          <div class="label">Текущее время (МСК / Санкт‑Петербург)</div>
+          <div class="time" id="currentTime">--:--</div>
+        </div>
       </div>
     </header>
 
-    <section class="card">
+    <section class="card timer">
       <div class="tableWrap">
         <table>
           <thead>
@@ -212,12 +334,35 @@
 
     <div class="small">
       Подсветка: <b>≤30 мин</b> — оранжевая, <b>≤5 мин</b> — красная, <b>≤0</b> — “окончен”.
-      Время считается в выбранном часовом поясе (по умолчанию МСК).
+      Время считается только по МСК (Санкт‑Петербург).
     </div>
   </div>
 
 <script>
   const STORAGE_KEY = "examTracker.v2";
+
+const THEME_KEY = "examTracker.theme";
+const themeBtn = document.getElementById("themeBtn");
+
+function getTheme(){
+  return localStorage.getItem(THEME_KEY) || "light";
+}
+function setTheme(t){
+  document.documentElement.dataset.theme = t;
+  localStorage.setItem(THEME_KEY, t);
+  updateThemeBtn();
+}
+function updateThemeBtn(){
+  const t = getTheme();
+  themeBtn.innerHTML = (t === "dark")
+    ? '🌙 Тёмная'
+    : '☀ Светлая';
+}
+themeBtn.addEventListener("click", () => {
+  setTheme(getTheme() === "dark" ? "light" : "dark");
+});
+updateThemeBtn();
+
 
   // Та же таблица экзаменов, что и на первой странице.
   const EXAMS = [
@@ -323,9 +468,8 @@
       return;
     }
 
-    const tz = (state.timeZone === "local")
-      ? Intl.DateTimeFormat().resolvedOptions().timeZone
-      : (state.timeZone || "Europe/Moscow");
+        const tz = "Europe/Moscow";
+    const tzLabel = "МСК (Санкт‑Петербург)";
 
     const now = new Date();
     const nowP = getParts(now, tz);
@@ -334,7 +478,7 @@
     const startDate = makeZonedDate({year: nowP.year, month: nowP.month, day: nowP.day, hour: sh, minute: sm, second: 0}, tz);
 
     document.getElementById("metaLine").textContent =
-      `Старт: ${state.startTime} · Часовой пояс: ${tz} · Экзаменов: ${state.selectedExamIds.length}`;
+      `Старт: ${state.startTime} · Часовой пояс: ${tzLabel} · Экзаменов: ${state.selectedExamIds.length}`;
 
     const rowsEl = document.getElementById("rows");
     rowsEl.innerHTML = "";
@@ -356,7 +500,7 @@
       tr.dataset.startMs = String(it.startMs);
 
       tr.innerHTML = `
-        <td><b>${it.ex.subject}</b><div style="color:rgba(255,255,255,.65); font-size:12px; margin-top:4px;">${it.ex.type}</div></td>
+        <td><b>${it.ex.subject}</b><div class="sub">${it.ex.type}</div></td>
         <td>${formatDuration(it.ex.durationMin)}</td>
         <td class="endAt">${formatTime(it.end, tz)}</td>
         <td class="left">--:--</td>
