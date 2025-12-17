@@ -303,8 +303,7 @@ html[data-theme="light"]{
     <header>
       <div class="title">
         <h1>Exam Tracker</h1>
-        <p>Выбери экзамены и задай время начала — на следующем экране будет <b>время окончания</b>, <b>таймер “осталось”</b> и подсветка за 30/5 минут до конца.</p>
-      </div>
+        </div>
       <div class="headerRight">
         <button class="themeBtn" id="themeBtn" type="button" aria-label="Переключить тему">—</button>
         <div class="pill" id="selectedPill">Выбрано: 0</div>
@@ -315,7 +314,7 @@ html[data-theme="light"]{
       <section class="card">
         <div class="inner">
           <div class="row">
-            <label for="startTimeInput">Время начала экзамена (МСК / Санкт‑Петербург)</label>
+            <label for="startTimeInput">Время начала экзамена</label>
             <input type="time" id="startTimeInput" value="10:00" />
           </div>
 <div class="row">
@@ -327,14 +326,7 @@ html[data-theme="light"]{
             <button class="ghost" type="button" id="selectAllBtn">Выбрать все</button>
             <button class="ghost" type="button" id="clearAllBtn">Снять все</button>
           </div>
-
-          <div class="examPane">
-            <div class="hint">
-              Источник длительностей: официальный приказ (см. комментарий в коде) — добавлены все предметы и части иностранных языков.
-            </div>
-          </div>
-
-          <div class="footerActions">
+<div class="footerActions">
             <div class="hint" id="warnText"></div>
             <button id="continueBtn" type="button" disabled>Продолжить →</button>
           </div>
