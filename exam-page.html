@@ -180,66 +180,7 @@ html[data-theme="light"]{
   color: var(--timerText);
 }
 .card.timer .sub{ color: var(--timerMuted); }
-.card.timer .bar{
-  background: var(--timerBarBg);
-  border: 1px solid var(--timerBarBorder);
-}
-
-
-    .sub{
-      font-size: 12px;
-      margin-top: 4px;
-      opacity: .72;
-    }
-
-    .tableWrap{
-      overflow-x: auto;
-    }
-
-    table{
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 860px;
-    }
-
-    th, td{
-      padding: 12px 12px;
-      border-bottom: 1px solid var(--timerBorder2);
-      text-align: left;
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-
-    th{
-      font-size: 12px;
-      letter-spacing: .25px;
-      text-transform: uppercase;
-      color: var(--timerThText);
-      background: var(--timerThBg);
-    }
-
-    tr.ok{ background: var(--rowOk); }
-    tr.warn{ background: var(--rowWarn); }
-    tr.danger{ background: var(--rowDanger); }
-    tr.done{ background: var(--rowDone); }
-
-    .bar{
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: var(--timerBarBg);
-      border: 1px solid var(--timerBarBorder);
-      overflow:hidden;
-    }
-    .fill{
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transition: width .5s ease;
-    }
-
-    .actions{
+.card.timer .actions{
       margin-top: 12px;
       display:flex;
       gap: 10px;
@@ -304,7 +245,7 @@ html[data-theme="light"]{
       <div class="right">
         <button class="themeBtn" id="themeBtn" type="button" aria-label="Переключить тему">—</button>
         <div class="now">
-          <div class="label">Текущее время (МСК / Санкт‑Петербург)</div>
+          <div class="label">Текущее время</div>
           <div class="time" id="currentTime">--:--</div>
         </div>
       </div>
@@ -319,8 +260,7 @@ html[data-theme="light"]{
               <th>Длительность</th>
               <th>Окончание</th>
               <th>Осталось</th>
-              <th style="min-width: 220px;">Прогресс</th>
-            </tr>
+</tr>
           </thead>
           <tbody id="rows"></tbody>
         </table>
@@ -331,12 +271,7 @@ html[data-theme="light"]{
       <button type="button" class="ghost" id="backBtn">← Назад к выбору</button>
       <button type="button" class="ghost" id="resetBtn">Сбросить выбор</button>
     </div>
-
-    <div class="small">
-      Подсветка: <b>≤30 мин</b> — оранжевая, <b>≤5 мин</b> — красная, <b>≤0</b> — “окончен”.
-      Время считается только по МСК (Санкт‑Петербург).
-    </div>
-  </div>
+</div>
 
 <script>
   const STORAGE_KEY = "examTracker.v2";
@@ -503,11 +438,8 @@ updateThemeBtn();
         <td><b>${it.ex.subject}</b><div class="sub">${it.ex.type}</div></td>
         <td>${formatDuration(it.ex.durationMin)}</td>
         <td class="endAt">${formatTime(it.end, tz)}</td>
-        <td class="left">--:--</td>
-        <td>
-          <div class="bar"><div class="fill"></div></div>
-        </td>
-      `;
+        <td class="remaining">--:--</td>
+`;
       rowsEl.appendChild(tr);
     }
 
@@ -523,21 +455,13 @@ updateThemeBtn();
         const startMs = +tr.dataset.startMs;
 
         const leftMs = endMs - nowMs;
-        const leftCell = tr.querySelector(".left");
-        const fill = tr.querySelector(".fill");
-
-        const total = Math.max(1, endMs - startMs);
-        const passed = Math.min(total, Math.max(0, nowMs - startMs));
-        const pct = (passed / total) * 100;
-        fill.style.width = `${pct.toFixed(1)}%`;
-
+        const leftCell = tr.querySelector(".remaining");
         tr.classList.remove("ok","warn","danger","done");
 
         if (leftMs <= 0){
           tr.classList.add("done");
           leftCell.textContent = "Окончен";
-          fill.style.width = "100%";
-        } else {
+} else {
           leftCell.textContent = formatCountdown(leftMs);
           const leftMin = leftMs / 60000;
           if (leftMin <= 5) tr.classList.add("danger");
