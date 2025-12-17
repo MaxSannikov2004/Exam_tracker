@@ -230,6 +230,70 @@ html[data-theme="light"]{
   cursor: pointer;
   user-select: none;
 }
+/* ===== Таблица таймера: "дышит" и заполняет карточку ===== */
+.card.timer .tableWrap{
+  padding: 10px 12px 6px;
+  overflow-x: auto;        /* на узких экранах не ломаемся */
+}
+
+.card.timer table{
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;     /* ровные колонки */
+}
+
+.card.timer thead th{
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .2px;
+  text-align: left;
+}
+
+.card.timer tbody td{
+  padding: 16px 16px;
+  vertical-align: middle;
+}
+
+.card.timer th:nth-child(n+2),
+.card.timer td:nth-child(n+2){
+  text-align: center;
+}
+
+/* Первая колонка (название экзамена) аккуратнее */
+.card.timer td:first-child b{
+  display: block;
+  font-size: 18px;
+  line-height: 1.15;
+  margin-bottom: 4px;
+}
+.card.timer td:first-child .sub{
+  font-size: 13px;
+  line-height: 1.1;
+}
+
+/* Крупнее "Окончание" и "Осталось" */
+.card.timer tbody td:nth-child(3),
+.card.timer tbody td:nth-child(4){
+  font-size: 28px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .3px;
+}
+
+/* Мягкая зебра для читаемости */
+.card.timer tbody tr:nth-child(even) td{
+  background: rgba(127,127,127,.06);
+}
+html[data-theme="dark"] .card.timer tbody tr:nth-child(even) td{
+  background: rgba(255,255,255,.04);
+}
+
+/* Ширины колонок, чтобы таблица заполняла карточку красиво */
+.card.timer th:nth-child(1){ width: 44%; }
+.card.timer th:nth-child(2){ width: 18%; }
+.card.timer th:nth-child(3){ width: 19%; }
+.card.timer th:nth-child(4){ width: 19%; }
 
   </style>
 </head>
@@ -471,4 +535,5 @@ updateThemeBtn();
 </script>
 </body>
 </html>
+
 
