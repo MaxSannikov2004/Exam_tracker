@@ -1,179 +1,422 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Экзамены</title>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f0f0;
-            color: #003399;
-            text-align: center;
-            padding: 20px;
-            background-image: url("image/image.png");
-            background-size: cover;
-   	    background-position: top;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam Tracker — таймер</title>
 
-        h1, h2, h3 {
-            color: #003399;
-	    font-size: 1.5em;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+  <style>
+    :root{
+      --bg: #0b1020;
+      --card: rgba(255,255,255,.10);
+      --line: rgba(255,255,255,.18);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --ok: rgba(122,162,255,.20);
+      --warn: rgba(255,138,61,.20);
+      --danger: rgba(255,84,84,.22);
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --r: 18px;
+      --accent: #7aa2ff;
+      --accent2:#ff8a3d;
+    }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 15px;
-            text-align: center;
-	    font-size: 1.5em;
-        }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      color: var(--text);
+      min-height:100vh;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(180deg, rgba(11,16,32,.78), rgba(11,16,32,.78)),
+        url("image/image.png");
+      background-size: cover;
+      background-position: top center;
+      background-repeat:no-repeat;
+    }
 
-        th {
-            background-color: #003399;
-            color: white;
-        }
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+    }
 
-        .finished {
-            background-color: red;
-            color: white;
-        }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
 
-        .warning {
-            background-color: #ffcccc;
-            color: #cc0000;
-            font-size: 1.2em;
-        }
+    .left{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
 
-        #currentTime {
-            font-size: 4em; /* Сделать текущее время ещё крупнее */
-            margin-bottom: 20px;
-        }
+    .title{
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0;
+    }
 
-        /* Дополнительные стили для улучшения внешнего вида */
-        .end-time {
-            transition: background-color 0.5s, color 0.5s;
-        }
-    </style>
+    .meta{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .now{
+      display:flex;
+      align-items:baseline;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      box-shadow: var(--shadow);
+    }
+    .now .label{ color: var(--muted); font-size: 12px; }
+    .now .time{ font-size: 32px; font-weight: 900; letter-spacing: .5px; }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+
+    .tableWrap{
+      overflow-x: auto;
+    }
+
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    th, td{
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th{
+      font-size: 12px;
+      letter-spacing: .25px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.80);
+      background: rgba(0,0,0,.20);
+    }
+
+    tr.ok{ background: rgba(122,162,255,.07); }
+    tr.warn{ background: var(--warn); }
+    tr.danger{ background: var(--danger); }
+    tr.done{ background: rgba(255,84,84,.28); }
+
+    .bar{
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      overflow:hidden;
+    }
+    .fill{
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .5s ease;
+    }
+
+    .actions{
+      margin-top: 12px;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button{
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #0b1020;
+      background: linear-gradient(135deg, var(--accent), #b2c7ff);
+    }
+    .ghost{
+      color: var(--text);
+      background: rgba(255,255,255,.10);
+      border: 1px solid var(--line);
+    }
+
+    .small{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.35;
+    }
+  </style>
 </head>
+
 <body>
-    <h1><br/> <br/> <br/> <br/></h1>
-    <p id="currentTime"></p>
-    <table id="examTable">
-        <thead>
+  <div class="wrap">
+    <header>
+      <div class="left">
+        <div class="title">Таймер экзаменов</div>
+        <div class="meta" id="metaLine">—</div>
+      </div>
+
+      <div class="now">
+        <div class="label">Текущее время</div>
+        <div class="time" id="currentTime">--:--</div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="tableWrap">
+        <table>
+          <thead>
             <tr>
-                <th>Тип экзамена</th>
-                <th>Предмет</th>
-                <th>Продолжительность</th>
-                <th>Время окончания</th>
+              <th>Экзамен</th>
+              <th>Длительность</th>
+              <th>Окончание</th>
+              <th>Осталось</th>
+              <th style="min-width: 220px;">Прогресс</th>
             </tr>
-        </thead>
-        <tbody id="examBody"></tbody>
-    </table>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <script>
-        const examData = {
-            exam1: { type: 'ЕГЭ', subject: 'Химия', duration: '3 часа 30 минут', time: '3 30' },
-            exam2: { type: 'ЕГЭ', subject: 'Математика', duration: '3 часа 55 минут', time: '3 55' },
-            exam3: { type: 'ЕГЭ', subject: 'Русский язык', duration: '3 часа 30 минут', time: '3 30' },
-            exam4: { type: 'ЕГЭ', subject: 'Физика', duration: '3 часа 55 минут', time: '3 55' },
-            exam5: { type: 'ЕГЭ', subject: 'Биология', duration: '3 часа 55 минут', time: '3 55' },
-            // Добавьте больше экзаменов здесь, если необходимо
-        };
+    <div class="actions">
+      <button type="button" class="ghost" id="backBtn">← Назад к выбору</button>
+      <button type="button" class="ghost" id="resetBtn">Сбросить выбор</button>
+    </div>
 
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('currentTime').innerText = 'Текущее время: ' + now.toLocaleTimeString('ru-RU', {
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZone: 'Europe/Moscow'
-            });
-            checkWarnings(now);
+    <div class="small">
+      Подсветка: <b>≤30 мин</b> — оранжевая, <b>≤5 мин</b> — красная, <b>≤0</b> — “окончен”.
+      Время считается в выбранном часовом поясе (по умолчанию МСК).
+    </div>
+  </div>
+
+<script>
+  const STORAGE_KEY = "examTracker.v2";
+
+  // Та же таблица экзаменов, что и на первой странице.
+  const EXAMS = [
+    { id: "ege_russian", type: "ЕГЭ", subject: "Русский язык", durationMin: 210 },
+    { id: "ege_math_base", type: "ЕГЭ", subject: "Математика (базовый уровень)", durationMin: 180 },
+    { id: "ege_math_profile", type: "ЕГЭ", subject: "Математика (профильный уровень)", durationMin: 235 },
+
+    { id: "ege_physics", type: "ЕГЭ", subject: "Физика", durationMin: 235 },
+    { id: "ege_chemistry", type: "ЕГЭ", subject: "Химия", durationMin: 210 },
+    { id: "ege_biology", type: "ЕГЭ", subject: "Биология", durationMin: 235 },
+    { id: "ege_informatics", type: "ЕГЭ", subject: "Информатика (КЕГЭ)", durationMin: 235 },
+    { id: "ege_geography", type: "ЕГЭ", subject: "География", durationMin: 180 },
+
+    { id: "ege_social", type: "ЕГЭ", subject: "Обществознание", durationMin: 210 },
+    { id: "ege_history", type: "ЕГЭ", subject: "История", durationMin: 210 },
+    { id: "ege_literature", type: "ЕГЭ", subject: "Литература", durationMin: 235 },
+
+    { id: "ege_en_written", type: "ЕГЭ", subject: "Английский — письменная часть", durationMin: 190 },
+    { id: "ege_en_oral", type: "ЕГЭ", subject: "Английский — устная часть", durationMin: 17 },
+
+    { id: "ege_de_written", type: "ЕГЭ", subject: "Немецкий — письменная часть", durationMin: 190 },
+    { id: "ege_de_oral", type: "ЕГЭ", subject: "Немецкий — устная часть", durationMin: 17 },
+
+    { id: "ege_fr_written", type: "ЕГЭ", subject: "Французский — письменная часть", durationMin: 190 },
+    { id: "ege_fr_oral", type: "ЕГЭ", subject: "Французский — устная часть", durationMin: 17 },
+
+    { id: "ege_es_written", type: "ЕГЭ", subject: "Испанский — письменная часть", durationMin: 190 },
+    { id: "ege_es_oral", type: "ЕГЭ", subject: "Испанский — устная часть", durationMin: 17 },
+
+    { id: "ege_zh_written", type: "ЕГЭ", subject: "Китайский — письменная часть", durationMin: 180 },
+    { id: "ege_zh_oral", type: "ЕГЭ", subject: "Китайский — устная часть", durationMin: 14 },
+  ];
+
+  const examById = new Map(EXAMS.map(e => [e.id, e]));
+
+  function formatDuration(min){
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    const parts = [];
+    if (h) parts.push(`${h} ч`);
+    if (m) parts.push(`${m} мин`);
+    return parts.join(" ");
+  }
+
+  function pad2(n){ return String(n).padStart(2, "0"); }
+
+  function formatCountdown(ms){
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return h > 0 ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`;
+  }
+
+  function getParts(date, timeZone){
+    const dtf = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+      hour12: false
+    });
+    const parts = dtf.formatToParts(date);
+    const map = {};
+    for (const p of parts) if (p.type !== "literal") map[p.type] = p.value;
+    return {
+      year: +map.year, month: +map.month, day: +map.day,
+      hour: +map.hour, minute: +map.minute, second: +map.second
+    };
+  }
+
+  function tzOffsetMinutes(timeZone, date){
+    const p = getParts(date, timeZone);
+    const asUTC = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+    return (asUTC - date.getTime()) / 60000;
+  }
+
+  // Делает Date, который соответствует "стеночному" времени в timeZone (важно для корректного старта в МСК, даже если браузер не в МСК)
+  function makeZonedDate({year, month, day, hour, minute, second}, timeZone){
+    const utcGuess = new Date(Date.UTC(year, month - 1, day, hour, minute, second || 0));
+    const off = tzOffsetMinutes(timeZone, utcGuess);
+    return new Date(utcGuess.getTime() - off * 60000);
+  }
+
+  function formatTime(date, timeZone){
+    return new Intl.DateTimeFormat("ru-RU", {
+      timeZone,
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).format(date);
+  }
+
+  function loadState(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null; }
+    catch(e){ return null; }
+  }
+
+  function init(){
+    const state = loadState();
+    if (!state?.startTime || !Array.isArray(state.selectedExamIds) || state.selectedExamIds.length === 0){
+      alert("Нет выбранных экзаменов. Верну на страницу выбора.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    const tz = (state.timeZone === "local")
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone
+      : (state.timeZone || "Europe/Moscow");
+
+    const now = new Date();
+    const nowP = getParts(now, tz);
+
+    const [sh, sm] = state.startTime.split(":").map(Number);
+    const startDate = makeZonedDate({year: nowP.year, month: nowP.month, day: nowP.day, hour: sh, minute: sm, second: 0}, tz);
+
+    document.getElementById("metaLine").textContent =
+      `Старт: ${state.startTime} · Часовой пояс: ${tz} · Экзаменов: ${state.selectedExamIds.length}`;
+
+    const rowsEl = document.getElementById("rows");
+    rowsEl.innerHTML = "";
+
+    // построим строки
+    const items = state.selectedExamIds
+      .map(id => examById.get(id))
+      .filter(Boolean)
+      .map(ex => {
+        const end = new Date(startDate.getTime() + ex.durationMin * 60000);
+        return { ex, endMs: end.getTime(), startMs: startDate.getTime(), end };
+      })
+      .sort((a,b) => a.endMs - b.endMs);
+
+    for (const it of items){
+      const tr = document.createElement("tr");
+      tr.className = "ok";
+      tr.dataset.endMs = String(it.endMs);
+      tr.dataset.startMs = String(it.startMs);
+
+      tr.innerHTML = `
+        <td><b>${it.ex.subject}</b><div style="color:rgba(255,255,255,.65); font-size:12px; margin-top:4px;">${it.ex.type}</div></td>
+        <td>${formatDuration(it.ex.durationMin)}</td>
+        <td class="endAt">${formatTime(it.end, tz)}</td>
+        <td class="left">--:--</td>
+        <td>
+          <div class="bar"><div class="fill"></div></div>
+        </td>
+      `;
+      rowsEl.appendChild(tr);
+    }
+
+    function tick(){
+      const now = new Date();
+      document.getElementById("currentTime").textContent = formatTime(now, tz);
+
+      const nowMs = now.getTime();
+      const trs = rowsEl.querySelectorAll("tr");
+
+      trs.forEach(tr => {
+        const endMs = +tr.dataset.endMs;
+        const startMs = +tr.dataset.startMs;
+
+        const leftMs = endMs - nowMs;
+        const leftCell = tr.querySelector(".left");
+        const fill = tr.querySelector(".fill");
+
+        const total = Math.max(1, endMs - startMs);
+        const passed = Math.min(total, Math.max(0, nowMs - startMs));
+        const pct = (passed / total) * 100;
+        fill.style.width = `${pct.toFixed(1)}%`;
+
+        tr.classList.remove("ok","warn","danger","done");
+
+        if (leftMs <= 0){
+          tr.classList.add("done");
+          leftCell.textContent = "Окончен";
+          fill.style.width = "100%";
+        } else {
+          leftCell.textContent = formatCountdown(leftMs);
+          const leftMin = leftMs / 60000;
+          if (leftMin <= 5) tr.classList.add("danger");
+          else if (leftMin <= 30) tr.classList.add("warn");
+          else tr.classList.add("ok");
         }
+      });
+    }
 
-        function calculateEndTime(startTime, duration) {
-            const [hours, minutes] = startTime.split(':').map(Number);
-            const startDateTime = new Date();
-            startDateTime.setHours(hours);
-            startDateTime.setMinutes(minutes);
-            startDateTime.setSeconds(0);
-            startDateTime.setMilliseconds(0);
+    tick();
+    setInterval(tick, 1000);
 
-            const [durationHours, durationMinutes] = duration.split(' ').filter(item => !isNaN(item)).map(Number);
-            const endDateTime = new Date(startDateTime.getTime());
-            endDateTime.setHours(endDateTime.getHours() + durationHours);
-            endDateTime.setMinutes(endDateTime.getMinutes() + (durationMinutes || 0));
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
 
-            return endDateTime;
-        }
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      window.location.href = "index.html";
+    });
+  }
 
-        function checkWarnings(now) {
-            const examRows = document.querySelectorAll('#examTable tbody tr');
-            examRows.forEach(row => {
-                const endTimeAttr = row.getAttribute('data-end-time');
-                if (!endTimeAttr) return;
-
-                const endTime = new Date(endTimeAttr);
-                const timeDifference = (endTime - now) / 1000 / 60; // Разница в минутах
-
-                const endTimeCell = row.querySelector('.end-time');
-
-                if (timeDifference <= 0) {
-                    row.classList.add('finished');
-                    endTimeCell.innerText = 'Экзамен окончен';
-                } else if (timeDifference <= 30) {
-                    row.classList.add('warning');
-                } else {
-                    row.classList.remove('warning', 'finished');
-                }
-            });
-        }
-
-        function displayExams() {
-            const storedData = JSON.parse(localStorage.getItem('examData'));
-            if (!storedData) {
-                alert('Нет данных экзаменов. Пожалуйста, выберите экзамены на первой странице.');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            const startTime = storedData.startTime;
-            const selectedExams = storedData.selectedExams;
-            const examBody = document.getElementById('examBody');
-
-            selectedExams.forEach((examKey) => {
-                const exam = examData[examKey];
-                const endTime = calculateEndTime(startTime, exam.time);
-                const endTimeString = endTime.toLocaleTimeString('ru-RU', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: 'Europe/Moscow'
-                });
-
-                const row = `<tr data-end-time="${endTime.toISOString()}">
-                                <td>${exam.type}</td>
-                                <td>${exam.subject}</td>
-                                <td>${exam.duration}</td>
-                                <td class="end-time">${endTimeString}</td>
-                             </tr>`;
-                examBody.insertAdjacentHTML('beforeend', row);
-            });
-        }
-
-        setInterval(updateTime, 1000); // Обновляем текущее время каждую секунду
-        window.onload = function() {
-            displayExams();
-            updateTime();
-        };
-    </script>
+  window.addEventListener("load", init);
+</script>
 </body>
 </html>
