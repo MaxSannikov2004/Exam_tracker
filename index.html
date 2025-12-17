@@ -1,84 +1,485 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Выбор экзаменов</title>
-    <style>
-        body {
-                       font-family: 'Roboto', sans-serif;
-            background-color: #f0f0f0;
-            color: #003399;
-            text-align: center;
-            padding: 20px;
-            background-image: url("image/image.png");
-            background-size: cover;
-   	    background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam Tracker — выбор экзаменов</title>
 
-        button {
-            background-color: #003399;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+  <!-- Шрифт (если нет интернета, просто будет fallback на системный) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-        button:hover {
-            background-color: #ff6600;
-        }
+  <style>
+    :root{
+      --bg: #0b1020;
+      --card: rgba(255,255,255,.10);
+      --card2: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --line: rgba(255,255,255,.18);
+      --accent: #7aa2ff;
+      --accent2:#ff8a3d;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --r: 18px;
+    }
 
-        select, input[type="time"], input[type="search"] {
-            width: 50%;
-            font-size: 16px;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      color: var(--text);
+      min-height:100vh;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(180deg, rgba(11,16,32,.78), rgba(11,16,32,.78)),
+        url("image/image.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat:no-repeat;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 16px 40px;
+    }
+
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 14px;
+    }
+
+    .title h1{
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: .2px;
+    }
+    .title p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+
+    .card .inner{
+      padding: 16px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 840px){
+      .grid{
+        grid-template-columns: 360px 1fr;
+        align-items:start;
+      }
+    }
+
+    label{
+      display:block;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    input[type="time"], input[type="search"], select{
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      outline: none;
+    }
+    input::placeholder{ color: rgba(255,255,255,.55); }
+
+    .row{ margin-bottom: 12px; }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button{
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #0b1020;
+      background: linear-gradient(135deg, var(--accent), #b2c7ff);
+    }
+    button:hover{ filter: brightness(1.03); }
+    button:disabled{
+      opacity: .45;
+      cursor: not-allowed;
+      filter:none;
+    }
+    .ghost{
+      color: var(--text);
+      background: rgba(255,255,255,.10);
+      border: 1px solid var(--line);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color: var(--muted);
+      font-size: 13px;
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+    }
+
+    .examPane{
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .group{
+      margin-top: 10px;
+      border-top: 1px dashed rgba(255,255,255,.18);
+      padding-top: 12px;
+    }
+    .group:first-child{
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .group h3{
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing:.25px;
+      color: rgba(255,255,255,.85);
+      text-transform: uppercase;
+    }
+
+    .examList{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 540px){
+      .examList{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .examItem{
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      transition: transform .08s ease, background-color .15s ease;
+    }
+    .examItem:hover{
+      transform: translateY(-1px);
+      background: rgba(0,0,0,.26);
+    }
+    .examItem input{ margin-top: 3px; transform: scale(1.15); }
+    .examMeta{ display:flex; flex-direction:column; gap:4px; }
+    .examName{ font-weight:700; }
+    .examSub{ color: var(--muted); font-size: 13px; line-height: 1.25; }
+    .k{
+      display:inline-block;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: rgba(255,255,255,.78);
+      background: rgba(255,255,255,.08);
+      margin-left: 8px;
+    }
+
+    .footerActions{
+      margin-top: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hint{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    a{ color: #cfe0ff; }
+  </style>
 </head>
+
 <body>
-    <h1>Выбор экзаменов</h1>
-    <h3>Введите время начала экзаменов:</h3>
-    <input type="time" id="startTimeInput" value="17:00"><br><br>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>Exam Tracker</h1>
+        <p>Выбери экзамены и задай время начала — на следующем экране будет <b>время окончания</b>, <b>таймер “осталось”</b> и подсветка за 30/5 минут до конца.</p>
+      </div>
+      <div class="pill" id="selectedPill">Выбрано: 0</div>
+    </header>
 
-    <h3>Поиск экзаменов:</h3>
-    <input type="search" id="examSearch" placeholder="Введите название экзамена" oninput="filterExams()"><br>
+    <div class="grid">
+      <section class="card">
+        <div class="inner">
+          <div class="row">
+            <label for="startTimeInput">Время начала экзамена</label>
+            <input type="time" id="startTimeInput" value="10:00" />
+          </div>
 
-    <h3>Выберите экзамены:</h3>
-    <select id="examSelector" multiple size="10">
-        <!-- Пример экзаменов -->
-        <option value="exam1">ЕГЭ, Химия, 3 часа 30 минут</option>
-        <option value="exam2">ЕГЭ, Математика, 3 часа 55 минут</option>
-        <option value="exam3">ЕГЭ, Русский язык, 3 часа 30 минут</option>
-        <option value="exam4">ЕГЭ, Физика, 3 часа 55 минут</option>
-        <option value="exam5">ЕГЭ, Биология, 3 часа 55 минут</option>
-        <!-- Можно добавить больше экзаменов -->
-    </select><br>
+          <div class="row">
+            <label for="timeZoneSelect">Часовой пояс</label>
+            <select id="timeZoneSelect">
+              <option value="Europe/Moscow">Europe/Moscow (МСК)</option>
+              <option value="local">Мой (локальный)</option>
+            </select>
+          </div>
 
-    <button onclick="submitExams()">Продолжить</button>
+          <div class="row">
+            <label for="examSearch">Поиск</label>
+            <input type="search" id="examSearch" placeholder="Напр.: математика, англ, инфо…" />
+          </div>
 
-    <script>
-        function filterExams() {
-            const query = document.getElementById('examSearch').value.toLowerCase();
-            const options = document.getElementById('examSelector').options;
+          <div class="toolbar">
+            <button class="ghost" type="button" id="selectAllBtn">Выбрать все</button>
+            <button class="ghost" type="button" id="clearAllBtn">Снять все</button>
+          </div>
 
-            for (let i = 0; i < options.length; i++) {
-                const examText = options[i].text.toLowerCase();
-                options[i].style.display = examText.includes(query) ? '' : 'none';
-            }
-        }
+          <div class="examPane">
+            <div class="hint">
+              Источник длительностей: официальный приказ (см. комментарий в коде) — добавлены все предметы и части иностранных языков.
+            </div>
+          </div>
 
-        function submitExams() {
-            const startTime = document.getElementById('startTimeInput').value;
-            const selectedExams = Array.from(document.getElementById('examSelector').selectedOptions).map(option => option.value);
-            const examData = JSON.stringify({ startTime, selectedExams });
-            localStorage.setItem('examData', examData);
-            window.location.href = 'exam-page.html'; // Перейти на вторую страницу
-        }
-    </script>
+          <div class="footerActions">
+            <div class="hint" id="warnText"></div>
+            <button id="continueBtn" type="button" disabled>Продолжить →</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner" id="examContainer"></div>
+      </section>
+    </div>
+  </div>
+
+<script>
+  // Длительности (в минутах) собраны по официальному приказу Минпросвещения/Рособрнадзора
+  // (в 2025/2026 формулировка одинаковая по группам предметов).
+  const EXAMS = [
+    // Основные
+    { id: "ege_russian", type: "ЕГЭ", subject: "Русский язык", durationMin: 210, group: "Основные" },
+    { id: "ege_math_base", type: "ЕГЭ", subject: "Математика (базовый уровень)", durationMin: 180, group: "Основные" },
+    { id: "ege_math_profile", type: "ЕГЭ", subject: "Математика (профильный уровень)", durationMin: 235, group: "Основные" },
+
+    // Естественно-научные и технические
+    { id: "ege_physics", type: "ЕГЭ", subject: "Физика", durationMin: 235, group: "Естественные и ИКТ" },
+    { id: "ege_chemistry", type: "ЕГЭ", subject: "Химия", durationMin: 210, group: "Естественные и ИКТ" },
+    { id: "ege_biology", type: "ЕГЭ", subject: "Биология", durationMin: 235, group: "Естественные и ИКТ" },
+    { id: "ege_informatics", type: "ЕГЭ", subject: "Информатика (КЕГЭ)", durationMin: 235, group: "Естественные и ИКТ" },
+    { id: "ege_geography", type: "ЕГЭ", subject: "География", durationMin: 180, group: "Естественные и ИКТ" },
+
+    // Гуманитарные
+    { id: "ege_social", type: "ЕГЭ", subject: "Обществознание", durationMin: 210, group: "Гуманитарные" },
+    { id: "ege_history", type: "ЕГЭ", subject: "История", durationMin: 210, group: "Гуманитарные" },
+    { id: "ege_literature", type: "ЕГЭ", subject: "Литература", durationMin: 235, group: "Гуманитарные" },
+
+    // Иностранные языки (письменно/устно — разные дни, поэтому отдельные пункты)
+    { id: "ege_en_written", type: "ЕГЭ", subject: "Английский — письменная часть", durationMin: 190, group: "Иностранные языки" },
+    { id: "ege_en_oral", type: "ЕГЭ", subject: "Английский — устная часть", durationMin: 17, group: "Иностранные языки" },
+
+    { id: "ege_de_written", type: "ЕГЭ", subject: "Немецкий — письменная часть", durationMin: 190, group: "Иностранные языки" },
+    { id: "ege_de_oral", type: "ЕГЭ", subject: "Немецкий — устная часть", durationMin: 17, group: "Иностранные языки" },
+
+    { id: "ege_fr_written", type: "ЕГЭ", subject: "Французский — письменная часть", durationMin: 190, group: "Иностранные языки" },
+    { id: "ege_fr_oral", type: "ЕГЭ", subject: "Французский — устная часть", durationMin: 17, group: "Иностранные языки" },
+
+    { id: "ege_es_written", type: "ЕГЭ", subject: "Испанский — письменная часть", durationMin: 190, group: "Иностранные языки" },
+    { id: "ege_es_oral", type: "ЕГЭ", subject: "Испанский — устная часть", durationMin: 17, group: "Иностранные языки" },
+
+    { id: "ege_zh_written", type: "ЕГЭ", subject: "Китайский — письменная часть", durationMin: 180, group: "Иностранные языки" },
+    { id: "ege_zh_oral", type: "ЕГЭ", subject: "Китайский — устная часть", durationMin: 14, group: "Иностранные языки" },
+  ];
+
+  const STORAGE_KEY = "examTracker.v2";
+  const examContainer = document.getElementById("examContainer");
+  const searchInput = document.getElementById("examSearch");
+  const pill = document.getElementById("selectedPill");
+  const warnText = document.getElementById("warnText");
+  const continueBtn = document.getElementById("continueBtn");
+
+  function formatDuration(min){
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    const parts = [];
+    if (h) parts.push(`${h} ч`);
+    if (m) parts.push(`${m} мин`);
+    return parts.join(" ");
+  }
+
+  function loadState(){
+    try{
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null;
+    } catch(e){
+      return null;
+    }
+  }
+
+  function saveState(state){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function getSelectedIds(){
+    return Array.from(document.querySelectorAll('input[name="exam"]:checked')).map(x => x.value);
+  }
+
+  function updatePill(){
+    const count = getSelectedIds().length;
+    pill.textContent = `Выбрано: ${count}`;
+    continueBtn.disabled = count === 0;
+    warnText.textContent = count === 0 ? "Выбери хотя бы один экзамен." : "";
+  }
+
+  function render(){
+    const q = (searchInput.value || "").trim().toLowerCase();
+    const byGroup = new Map();
+    for (const ex of EXAMS){
+      const text = `${ex.type} ${ex.subject}`.toLowerCase();
+      if (q && !text.includes(q)) continue;
+      if (!byGroup.has(ex.group)) byGroup.set(ex.group, []);
+      byGroup.get(ex.group).push(ex);
+    }
+
+    let html = "";
+    for (const [group, items] of byGroup){
+      html += `<div class="group"><h3>${group}</h3><div class="examList">`;
+      for (const ex of items){
+        html += `
+          <label class="examItem">
+            <input type="checkbox" name="exam" value="${ex.id}">
+            <div class="examMeta">
+              <div class="examName">${ex.subject}<span class="k">${formatDuration(ex.durationMin)}</span></div>
+              <div class="examSub">${ex.type}</div>
+            </div>
+          </label>
+        `;
+      }
+      html += `</div></div>`;
+    }
+
+    if (!html){
+      html = `<div class="hint">Ничего не найдено по запросу “${searchInput.value}”.</div>`;
+    }
+
+    examContainer.innerHTML = html;
+
+    // восстановить выбранное
+    const state = loadState();
+    if (state?.selectedExamIds?.length){
+      const set = new Set(state.selectedExamIds);
+      for (const el of document.querySelectorAll('input[name="exam"]')){
+        el.checked = set.has(el.value);
+      }
+    }
+
+    // слушатели на чекбоксы
+    for (const el of document.querySelectorAll('input[name="exam"]')){
+      el.addEventListener("change", () => {
+        const state = loadState() || {};
+        state.selectedExamIds = getSelectedIds();
+        state.startTime = document.getElementById("startTimeInput").value;
+        state.timeZone = document.getElementById("timeZoneSelect").value;
+        saveState(state);
+        updatePill();
+      });
+    }
+
+    updatePill();
+  }
+
+  // Инициализация
+  (function init(){
+    const state = loadState();
+    if (state?.startTime) document.getElementById("startTimeInput").value = state.startTime;
+    if (state?.timeZone) document.getElementById("timeZoneSelect").value = state.timeZone;
+
+    document.getElementById("startTimeInput").addEventListener("change", () => {
+      const state = loadState() || {};
+      state.startTime = document.getElementById("startTimeInput").value;
+      state.timeZone = document.getElementById("timeZoneSelect").value;
+      state.selectedExamIds = getSelectedIds();
+      saveState(state);
+    });
+
+    document.getElementById("timeZoneSelect").addEventListener("change", () => {
+      const state = loadState() || {};
+      state.startTime = document.getElementById("startTimeInput").value;
+      state.timeZone = document.getElementById("timeZoneSelect").value;
+      state.selectedExamIds = getSelectedIds();
+      saveState(state);
+    });
+
+    document.getElementById("selectAllBtn").addEventListener("click", () => {
+      for (const el of document.querySelectorAll('input[name="exam"]')) el.checked = true;
+      const state = loadState() || {};
+      state.selectedExamIds = getSelectedIds();
+      state.startTime = document.getElementById("startTimeInput").value;
+      state.timeZone = document.getElementById("timeZoneSelect").value;
+      saveState(state);
+      updatePill();
+    });
+
+    document.getElementById("clearAllBtn").addEventListener("click", () => {
+      for (const el of document.querySelectorAll('input[name="exam"]')) el.checked = false;
+      const state = loadState() || {};
+      state.selectedExamIds = [];
+      state.startTime = document.getElementById("startTimeInput").value;
+      state.timeZone = document.getElementById("timeZoneSelect").value;
+      saveState(state);
+      updatePill();
+    });
+
+    document.getElementById("examSearch").addEventListener("input", render);
+
+    document.getElementById("continueBtn").addEventListener("click", () => {
+      const state = loadState() || {};
+      state.startTime = document.getElementById("startTimeInput").value;
+      state.timeZone = document.getElementById("timeZoneSelect").value;
+      state.selectedExamIds = getSelectedIds();
+      if (!state.selectedExamIds.length){
+        updatePill();
+        return;
+      }
+      saveState(state);
+      window.location.href = "exam-page.html";
+    });
+
+    render();
+  })();
+</script>
 </body>
 </html>
